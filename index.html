@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absensi Digital Keperawatan Manajemen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .text-blue-medis { color: #0077b6; }
+        .bg-blue-medis { background-color: #0077b6; }
+        .text-green-kesehatan { color: #2a9d8f; }
+        .bg-green-kesehatan { background-color: #2a9d8f; }
+        .tab-button.active {
+            border-bottom: 2px solid #0077b6;
+            color: #0077b6;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Header -->
+     <header class="bg-blue-medis text-white p-4 sm:p-6 flex items-center justify-between shadow-md relative">
+    <!-- Logo Kiri -->
+    <img src="img/Logo RS Aisyiyah Bojonegoro.png" class="h-10 sm:h-12">
+
+    <!-- Judul Tengah -->
+    <h1 class="absolute left-1/2 transform -translate-x-1/2 text-lg sm:text-2xl font-semibold">
+        Manajemen Absensi Digital Keperawatan
+    </h1>
+
+    <!-- Logo Kanan -->
+    <img src="img/Logo Stikes Rajekwesi Bojonegoro.png" class="h-10 sm:h-12 rounded-full">
+</header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4 sm:p-6 flex-grow">
+        <div id="loading" class="text-center py-10" style="display:none;">
+            <p>Memuat...</p>
+        </div>
+
+        <!-- Auth Section (Login/Register) -->
+        <div id="auth-section" class="bg-white rounded-xl shadow-lg p-6 mb-6 max-w-sm mx-auto">
+            <h2 class="text-2xl font-bold text-center mb-6 text-blue-medis">Selamat Datang</h2>
+            <div class="flex justify-center mb-6 border-b border-gray-200">
+                <button id="login-tab" class="tab-button active flex-1 p-3 text-center transition">Login</button>
+                <button id="register-tab" class="tab-button flex-1 p-3 text-center transition">Daftar</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-form">
+                <form id="loginForm">
+                    <div class="mb-4">
+                        <label for="loginUsername" class="block text-gray-700 font-semibold mb-2">Nama Pengguna</label>
+                        <input type="text" id="loginUsername" name="loginUsername" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-medis" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="loginPassword" class="block text-gray-700 font-semibold mb-2">Kata Sandi</label>
+                        <input type="password" id="loginPassword" name="loginPassword" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-medis" required>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-medis text-white py-3 rounded-full font-bold hover:bg-blue-800 transition">Login</button>
+                </form>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form" class="hidden">
+                <form id="registerForm">
+                    <div class="mb-4">
+                        <label for="registerUsername" class="block text-gray-700 font-semibold mb-2">Nama Pengguna</label>
+                        <input type="text" id="registerUsername" name="registerUsername" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-medis" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="registerPassword" class="block text-gray-700 font-semibold mb-2">Kata Sandi</label>
+                        <input type="password" id="registerPassword" name="registerPassword" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-medis" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="registerFullName" class="block text-gray-700 font-semibold mb-2">Nama Lengkap</label>
+                        <input type="text" id="registerFullName" name="registerFullName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-medis" required>
+                    </div>
+                    <button type="submit" class="w-full bg-green-kesehatan text-white py-3 rounded-full font-bold hover:bg-green-700 transition">Daftar</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- App Content Section -->
+        <div id="app-content" class="hidden">
+            <!-- Home Section -->
+            <div id="home-section" class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <div class="flex flex-col sm:flex-row items-center justify-between mb-6">
+                    <div>
+                        <h2 id="greeting" class="text-xl sm:text-2xl font-bold text-blue-medis">Selamat Pagi, Perawat!</h2>
+                        <p id="current-date" class="text-gray-600 text-sm sm:text-base"></p>
+                    </div>
+                    <div class="flex items-center space-x-2 mt-4 sm:mt-0">
+                        <span class="text-lg font-semibold">Status:</span>
+                        <span id="status-text" class="px-3 py-1 rounded-full text-sm font-semibold">Belum Check-In</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-center items-center space-x-4 mb-8">
+                    <button id="check-in-btn" class="bg-blue-medis text-white w-24 h-24 sm:w-32 sm:h-32 rounded-full shadow-lg hover:bg-blue-800 transition transform hover:scale-105 flex flex-col items-center justify-center text-center">
+                        <i class="ph-bold ph-sign-in text-3xl sm:text-5xl mb-1"></i>
+                        <span class="text-xs sm:text-sm font-medium">Check-In</span>
+                    </button>
+                    <button id="check-out-btn" class="bg-blue-medis text-white w-24 h-24 sm:w-32 sm:h-32 rounded-full shadow-lg hover:bg-blue-800 transition transform hover:scale-105 flex flex-col items-center justify-center text-center opacity-50 cursor-not-allowed" disabled>
+                        <i class="ph-bold ph-sign-out text-3xl sm:text-5xl mb-1"></i>
+                        <span class="text-xs sm:text-sm font-medium">Check-Out</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Team List Section -->
+            <div id="team-list-section" class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">Daftar Anggota Tim</h3>
+                <div id="team-list"></div>
+            </div>
+
+            <!-- History Section -->
+            <div id="history-section" class="hidden bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">Riwayat Kehadiran</h3>
+                <div id="history-list"></div>
+            </div>
+            
+            <!-- Report Section -->
+            <div id="report-section" class="hidden bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">Rekap Laporan</h3>
+                <div id="report-content">
+                    <p class="text-gray-500 text-center">Fungsi rekap laporan akan ditampilkan di sini.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for messages -->
+    <div id="message-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm text-center">
+            <h4 id="modal-title" class="text-xl font-semibold mb-2"></h4>
+            <p id="modal-message" class="text-gray-600 mb-4"></p>
+            <button id="modal-close-btn" class="bg-blue-medis text-white px-6 py-2 rounded-full hover:bg-blue-800">OK</button>
+        </div>
+    </div>
+
+    <!-- Footer Navigation -->
+    <nav class="bg-white p-4 shadow-inner fixed bottom-0 w-full flex justify-around sm:hidden">
+        <button id="nav-home" class="flex flex-col items-center text-blue-medis font-semibold">
+            <i class="ph-fill ph-house text-2xl"></i>
+            <span class="text-xs">Beranda</span>
+        </button>
+        <button id="nav-history" class="flex flex-col items-center text-gray-400 font-semibold">
+            <i class="ph-bold ph-calendar-check text-2xl"></i>
+            <span class="text-xs">Riwayat</span>
+        </button>
+        <button id="nav-report" class="flex flex-col items-center text-gray-400 font-semibold">
+            <i class="ph-bold ph-chart-bar text-2xl"></i>
+            <span class="text-xs">Laporan</span>
+        </button>
+    </nav>
+
+    <script type="module">
+        let users = JSON.parse(localStorage.getItem('users')) || {
+            'nurul': { password: 'nurul123', name: 'Nurul Eka Yoga Muftachurrahmah, S.Kep', role: 'Penanggungjawab Ruangan' },
+            'rina': { password: 'rina123', name: 'Rina Afif Alviani, S.Kep', role: 'Ketua Tim 1' },
+            'rizka': { password: 'rizka123', name: 'Rizka Puji N.H., S.Kep', role: 'Ketua Tim 2' },
+            'nilna': { password: 'nilna123', name: 'Nilna Himma Nur H., S.Kep', role: 'Perawat Pelaksana' },
+            'putri': { password: 'putri123', name: 'Putri Agustina, S.Kep', role: 'Perawat Pelaksana' },
+            'avrinda': { password: 'avrinda123', name: 'Avrinda Debora Sinda Marcelin, S.Kep', role: 'Perawat Pelaksana' },
+            'yunia': { password: 'yunia123', name: 'Yunia Afriyani, S.Kep', role: 'Perawat Pelaksana' },
+            'fatma': { password: 'fatma123', name: 'Fatma Ayu Pradita, S.Kep', role: 'Perawat Pelaksana' },
+            'melisa': { password: 'melisa123', name: 'Melisa Endang Setyorini, S.Kep', role: 'Perawat Pelaksana' },
+            'hikam': { password: 'hikam123', name: 'M. Nashihul Hikam, S.Kep', role: 'Perawat Pelaksana' }
+        };
+        
+        let attendance = JSON.parse(localStorage.getItem('attendance')) || {};
+        let currentUser = null;
+
+        const teamData = [
+            { role: "Penanggungjawab Ruangan", name: "Nurul Eka Yoga Muftachurrahmah, S.Kep" },
+            { role: "Ketua Tim 1", name: "Rina Afif Alviani, S.Kep" },
+            { role: "Ketua Tim 2", name: "Rizka Puji N.H., S.Kep" },
+            { role: "Perawat Pelaksana", name: "Nilna Himma Nur H., S.Kep" },
+            { role: "Perawat Pelaksana", name: "Putri Agustina, S.Kep" },
+            { role: "Perawat Pelaksana", name: "Avrinda Debora Sinda Marcelin, S.Kep" },
+            { role: "Perawat Pelaksana", name: "Yunia Afriyani, S.Kep" },
+            { role: "Perawat Pelaksana", name: "Fatma Ayu Pradita, S.Kep" },
+            { role: "Perawat Pelaksana", name: "Melisa Endang Setyorini, S.Kep" },
+            { role: "Perawat Pelaksana", name: "M. Nashihul Hikam, S.Kep" }
+        ];
+
+        const teamListDiv = document.getElementById('team-list');
+        const checkInBtn = document.getElementById('check-in-btn');
+        const checkOutBtn = document.getElementById('check-out-btn');
+        const statusText = document.getElementById('status-text');
+        const greetingEl = document.getElementById('greeting');
+        const currentDateEl = document.getElementById('current-date');
+        const messageModal = document.getElementById('message-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        const navHome = document.getElementById('nav-home');
+        const navHistory = document.getElementById('nav-history');
+        const navReport = document.getElementById('nav-report');
+        const appContentSection = document.getElementById('app-content');
+        const homeSection = document.getElementById('home-section');
+        const teamListSection = document.getElementById('team-list-section');
+        const historySection = document.getElementById('history-section');
+        const reportSection = document.getElementById('report-section');
+
+        const authSection = document.getElementById('auth-section');
+        const loginTab = document.getElementById('login-tab');
+        const registerTab = document.getElementById('register-tab');
+        const loginFormDiv = document.getElementById('login-form');
+        const registerFormDiv = document.getElementById('register-form');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        
+        // Show/Hide tabs
+        loginTab.addEventListener('click', () => {
+            loginTab.classList.add('active');
+            registerTab.classList.remove('active');
+            loginFormDiv.classList.remove('hidden');
+            registerFormDiv.classList.add('hidden');
+        });
+
+        registerTab.addEventListener('click', () => {
+            registerTab.classList.add('active');
+            loginTab.classList.remove('active');
+            registerFormDiv.classList.remove('hidden');
+            loginFormDiv.classList.add('hidden');
+        });
+
+        // Register form submission
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('registerUsername').value.toLowerCase();
+            const password = document.getElementById('registerPassword').value;
+            const fullName = document.getElementById('registerFullName').value;
+
+            if (users[username]) {
+                showModal("Pendaftaran Gagal", "Nama pengguna sudah ada. Silakan gunakan nama lain.");
+            } else {
+                users[username] = { password, name: fullName, role: 'Perawat Pelaksana' };
+                localStorage.setItem('users', JSON.stringify(users));
+                showModal("Pendaftaran Berhasil", `Akun untuk ${fullName} berhasil dibuat! Silakan login.`);
+                loginTab.click(); // Switch back to login tab
+                registerForm.reset();
+            }
+        });
+
+        // Login form submission
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value.toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+
+            if (users[username] && users[username].password === password) {
+                currentUser = username;
+                localStorage.setItem('currentUser', currentUser);
+                authSection.classList.add('hidden');
+                appContentSection.classList.remove('hidden');
+                initApp();
+            } else {
+                showModal("Login Gagal", "Nama pengguna atau kata sandi salah.");
+            }
+        });
+
+        // Function to display a custom modal message
+        function showModal(title, message) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            messageModal.classList.remove('hidden');
+            messageModal.classList.add('flex');
+        }
+
+        modalCloseBtn.addEventListener('click', () => {
+            messageModal.classList.add('hidden');
+            messageModal.classList.remove('flex');
+        });
+
+        function initApp() {
+            if (currentUser) {
+                greetingEl.textContent = `Selamat Pagi, ${users[currentUser].name.split(',')[0]}!`;
+                // Load attendance for current user
+                if (!attendance[currentUser]) {
+                    attendance[currentUser] = { checkedIn: false, checkInTime: null, checkOutTime: null, history: [] };
+                }
+                updateStatus();
+                renderTeamList();
+            }
+        }
+
+        // Set current date
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        currentDateEl.textContent = new Date().toLocaleDateString('id-ID', options);
+
+        // Render team list
+        function renderTeamList() {
+            let html = '';
+            const allUsersData = Object.values(users);
+            const teamRoles = ["Penanggungjawab Ruangan", "Ketua Tim 1", "Ketua Tim 2", "Perawat Pelaksana"];
+            
+            teamRoles.forEach(role => {
+                const members = allUsersData.filter(user => user.role === role);
+                if (members.length > 0) {
+                    html += `<h4 class="text-lg font-semibold text-green-kesehatan mt-4 mb-2">${role}</h4>`;
+                    members.forEach(member => {
+                        html += `
+                            <div class="bg-gray-100 p-3 rounded-lg mb-2 flex items-center justify-between">
+                                <p class="font-medium">${member.name}</p>
+                                <span class="text-sm font-medium px-2 py-1 rounded-full text-white bg-blue-medis">Offline</span>
+                            </div>
+                        `;
+                    });
+                }
+            });
+            teamListDiv.innerHTML = html;
+        }
+
+        // Update attendance status
+        function updateStatus() {
+            const userAttendance = attendance[currentUser];
+            if (userAttendance.checkedIn) {
+                statusText.textContent = `Telah Check-In pukul ${new Date(userAttendance.checkInTime).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`;
+                statusText.classList.remove('bg-gray-400');
+                statusText.classList.add('bg-green-kesehatan', 'text-white');
+                checkInBtn.disabled = true;
+                checkInBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                checkOutBtn.disabled = false;
+                checkOutBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                statusText.textContent = 'Belum Check-In';
+                statusText.classList.remove('bg-green-kesehatan', 'text-white');
+                statusText.classList.add('bg-gray-400', 'text-white');
+                checkInBtn.disabled = false;
+                checkInBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                checkOutBtn.disabled = true;
+                checkOutBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+            localStorage.setItem('attendance', JSON.stringify(attendance));
+        }
+
+        checkInBtn.addEventListener('click', () => {
+            const userAttendance = attendance[currentUser];
+            if (!userAttendance.checkedIn) {
+                userAttendance.checkedIn = true;
+                userAttendance.checkInTime = new Date().toISOString();
+                showModal("Check-In Berhasil", `Berhasil Check-In pada ${new Date().toLocaleTimeString('id-ID')}.`);
+                updateStatus();
+            } else {
+                showModal("Gagal", "Anda sudah Check-In hari ini.");
+            }
+        });
+
+        checkOutBtn.addEventListener('click', () => {
+            const userAttendance = attendance[currentUser];
+            if (userAttendance.checkedIn) {
+                userAttendance.checkOutTime = new Date().toISOString();
+                userAttendance.checkedIn = false;
+                userAttendance.history.push({
+                    date: new Date().toLocaleDateString('id-ID', options),
+                    checkIn: userAttendance.checkInTime,
+                    checkOut: userAttendance.checkOutTime
+                });
+                showModal("Check-Out Berhasil", `Berhasil Check-Out pada ${new Date().toLocaleTimeString('id-ID')}.`);
+                updateStatus();
+            } else {
+                showModal("Gagal", "Anda belum Check-In hari ini.");
+            }
+        });
+
+        // Navigation
+        function showSection(sectionId) {
+            const sections = [homeSection, teamListSection, historySection, reportSection];
+            sections.forEach(section => {
+                if (section.id.startsWith(sectionId)) {
+                    section.classList.remove('hidden');
+                } else {
+                    section.classList.add('hidden');
+                }
+            });
+        }
+        
+        function renderHistory() {
+            const userAttendance = attendance[currentUser];
+            let html = '';
+            if (userAttendance.history.length === 0) {
+                html = '<p class="text-gray-500 text-center">Belum ada riwayat kehadiran.</p>';
+            } else {
+                userAttendance.history.forEach(entry => {
+                    const checkInTime = new Date(entry.checkIn).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    const checkOutTime = new Date(entry.checkOut).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    html += `
+                        <div class="bg-gray-100 p-4 rounded-lg mb-2">
+                            <h5 class="font-semibold text-blue-medis">${entry.date}</h5>
+                            <p class="text-sm">Check-In: <span class="text-green-kesehatan">${checkInTime}</span></p>
+                            <p class="text-sm">Check-Out: <span class="text-green-kesehatan">${checkOutTime}</span></p>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('history-list').innerHTML = html;
+        }
+
+        navHome.addEventListener('click', () => {
+            showSection('home-section');
+            showSection('team-list-section');
+        });
+        navHistory.addEventListener('click', () => {
+            showSection('history-section');
+            renderHistory();
+        });
+        navReport.addEventListener('click', () => {
+            showSection('report-section');
+        });
+
+        // Check if user is already logged in from previous session
+        const storedUser = localStorage.getItem('currentUser');
+        if (storedUser && users[storedUser]) {
+            currentUser = storedUser;
+            authSection.classList.add('hidden');
+            appContentSection.classList.remove('hidden');
+            initApp();
+        } else {
+            authSection.classList.remove('hidden');
+            appContentSection.classList.add('hidden');
+        }
+
+    </script>
+</body>
+</html>
